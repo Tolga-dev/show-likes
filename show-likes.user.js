@@ -9,8 +9,6 @@
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
 
-//array e atma kaldi
-
 (function() {
     'use strict';
     let UsedElements = [];
@@ -18,25 +16,51 @@
 
     let getParentforChilds = function(index)
     {
-        let parent = document.querySelectorAll('div#contents[class="style-scope ytd-rich-grid-row"]').item(index)
+        let parent;
+
+        if(gate == 1)
+        {
+            parent = document.querySelectorAll('div#contents[class="style-scope ytd-item-section-renderer"]').item(2).childNodes[index]; //childNodes[index]
+        }
+        else
+        {
+             parent = document.querySelectorAll('div#contents[class="style-scope ytd-rich-grid-row"]').item(index)
+        }
 
         return parent;
     }
 
     let getChildsFromParents = function(parent,index)
     {
-        let temp = parent.childNodes[index];
-        let meta = temp.querySelectorAll("#metadata-line").item(0).getElementsByClassName("style-scope ytd-video-meta-block")[0];
-        let videoLink = getChildLinkFromParent(temp);
+        let temp;
+        let meta;
+        let videoLink;
+
+        if(gate == 1)
+        {
+            temp = parent;
+            meta = temp.querySelector('div#metadata-line[class="style-scope ytd-video-meta-block"]');
+            videoLink = getChildLinkFromParent(temp);
+        }
+        else
+        {
+            temp = parent.childNodes[index];
+            meta = temp.querySelectorAll("#metadata-line").item(0).getElementsByClassName("style-scope ytd-video-meta-block")[0];
+            videoLink = getChildLinkFromParent(temp);
+        }
+
+
         if(!UsedElements.includes(videoLink))
         {
             UsedElements.push(videoLink);
             getPage(videoLink, function(response)
                 {
-                       meta.append(' ' + getLike(response) + ' likes');
+                       meta.append('  ' + getLike(response) + '  likes ');
                 }
                 );
+
         }
+
     }
     let getChildLinkFromParent = function(child)
     {
@@ -51,14 +75,27 @@
         console.log("Working!");
 
         let parent = document.querySelectorAll('div#contents[class="style-scope ytd-rich-grid-row"]').length;
+        if(parent == 0)
+        {
+            gate = 1;
+            parent = document.querySelectorAll('div#contents[class="style-scope ytd-item-section-renderer"]').item(2).childNodes.length;
+        }
+        else
+        {
+            gate = 0;
+        }
+
 
         for(let i = 0; i < parent; i++)
         {
             let forchild = getParentforChilds(i);
+            console.log(i);
+
             for(let j = 0; j < forchild.childNodes.length ; j++)
             {
                 getChildsFromParents(forchild,j)
             }
+
         }
 
     }
@@ -87,34 +124,6 @@
 
     }
 
-/*
-    let checkGate = function()
-    {
-
-        if(!checkGate())
-        {
-
-            gate = 1;
-            parent = document.querySelectorAll('div#contents[class="style-scope ytd-item-section-renderer"]').item(2).childNodes.length;
-                //.item(2).childNodes[0].querySelector('div#metadata-line[class="style-scope ytd-video-meta-block"]')
-
-        }
-        console.log(gate + " gate" );
-        console.log(parent);
-
-
-        if(gate == 1)
-        {
-            return 1;
-        }
-        if(gate == 0)
-        {
-            return 0;
-        }
-
-    }
-
-*/
 
 
 })();
