@@ -17,7 +17,6 @@
     let getParentforChilds = function(index)
     {
         let parent;
-
         if(gate == 1)
         {
             parent = document.querySelectorAll('div#contents[class="style-scope ytd-item-section-renderer"]').item(2).childNodes[index]; //childNodes[index]
@@ -35,7 +34,6 @@
         let temp;
         let meta;
         let videoLink;
-
         if(gate == 1)
         {
             temp = parent;
@@ -48,8 +46,6 @@
             meta = temp.querySelectorAll("#metadata-line").item(0).getElementsByClassName("style-scope ytd-video-meta-block")[0];
             videoLink = getChildLinkFromParent(temp);
         }
-
-
         if(!UsedElements.includes(videoLink))
         {
             UsedElements.push(videoLink);
@@ -58,22 +54,16 @@
                        meta.append('  ' + getLike(response) + '  likes ');
                 }
                 );
-
         }
-
     }
     let getChildLinkFromParent = function(child)
     {
-
         var title = "https://www.youtube.com/" + child.querySelectorAll('a#thumbnail').item(this).getAttribute('href');
         return title;
     }
-
-
     let run = function()
     {
         console.log("Working!");
-
         let parent = document.querySelectorAll('div#contents[class="style-scope ytd-rich-grid-row"]').length;
         if(parent == 0)
         {
@@ -84,8 +74,6 @@
         {
             gate = 0;
         }
-
-
         for(let i = 0; i < parent; i++)
         {
             let forchild = getParentforChilds(i);
